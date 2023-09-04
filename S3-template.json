@@ -1,0 +1,161 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "This stack Create s3 bucket.\nThe template uses the OML Cloud Resources Tagging Standard to create resource tags. Tags are read as parameters between line 12 (pAppName) and line 68 (pSupportContact). The resource names are created using the OML Cloud Resource Naming Convention.\n1. OML Cloud Resources Tagging Standard : https://oml.service-now.com/teams?id=kb_article_view&sys_kb_id=fe13493adb2d34103055918cd3961967 2. OML Cloud Resource Naming Convention : https://oml.service-now.com/teams?id=kb_article_view&sysparm_article=KB0010047&sys_kb_id=21a5db0fdb6938103055918cd39619f2",
+    "Parameters": {
+        "pAppName": {
+            "Type": "String",
+            "Description": "Identify the applications that access the resources.",
+            "Default": "S3-bucket-prod"
+
+        },
+        "pAppId": {
+            "Type": "String",
+            "Description": "Identify the Cherwell ID of the application.",
+            "Default": "111222"
+
+        },
+        "pBudgetCentre": {
+            "Type": "String",
+            "Description": "Identify the cost center or Business Unit responsible for the application.",
+            "Default": "111555"
+
+        },
+        "pDataClassification": {
+            "Type": "String",
+            "Description": "Identify the specific data-confidentiality level a resource supports. Identify which controls and policies should be applied to resources.",
+            "AllowedValues": [
+                "Public",
+                "Confidential",
+                "Restricted",
+                "Internal"
+            ],
+            "Default": "Confidential"
+        },
+        "pDepartment": {
+            "Type": "String",
+            "Description": "Identify the department responsible for the application.",
+            "Default": "Platform-Engineering"
+        },
+        "pEnvironment": {
+            "Type": "String",
+            "AllowedValues": [
+                "sandbox",
+                "dev",
+                "qa",
+                "prod"
+            ],
+            "Default": "dev"
+
+        },
+        "pOwner": {
+            "Type": "String",
+            "Description": "Identify the Business owner.",
+            "Default": "Platform-engineering"
+
+        },
+        "pOwnerTeam": {
+            "Type": "String",
+            "Description": "Identify the team responsible for the resource.",
+            "Default": "Platform-engineering"
+
+        },
+        "pOwnerTeamEmail": {
+            "AllowedPattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$",
+            "ConstraintDescription": "Must be a valid email address",
+            "Description": "Identify the email address for the team responsible for the resource. The email should not be a personal email, it must be an anonymous email like a distribution list.",
+            "Default": "Platformengineering@oldmutual.com",
+            "Type": "String"
+        },
+        "pSupportContact": {
+            "AllowedPattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$",
+            "ConstraintDescription": "Must be a valid email address",
+            "Description": "The support contact email address.",
+            "Default": "Platformengineering",
+            "Type": "String"
+        }
+    },
+    "Resources": {
+        "S3Bucket": {
+            "Type": "AWS::S3::Bucket",
+            "Properties": {
+                "BucketName": {
+                    "Fn::Sub": "${pAppName}-${pEnvironment}-bucket"
+                },
+                "Tags": [{
+                        "Key": "Name",
+                        "Value": {
+                            "Fn::Sub": "${pAppName}-${pEnvironment}-bucket"
+                        }
+                    },
+                    {
+                        "Key": "BudgetCentre",
+                        "Value": {
+                            "Ref": "pBudgetCentre"
+                        }
+                    },
+                    {
+                        "Key": "AppName",
+                        "Value": {
+                            "Fn::Sub": "${pAppName}"
+                        }
+                    },
+                    {
+                        "Key": "AppId",
+                        "Value": {
+                            "Ref": "pAppId"
+                        }
+                    },
+                    {
+                        "Key": "Department",
+                        "Value": {
+                            "Ref": "pDepartment"
+                        }
+                    },
+                    {
+                        "Key": "Environment",
+                        "Value": {
+                            "Ref": "pEnvironment"
+                        }
+                    },
+                    {
+                        "Key": "DataClassification",
+                        "Value": {
+                            "Ref": "pDataClassification"
+                        }
+                    },
+                    {
+                        "Key": "SupportContact",
+                        "Value": {
+                            "Ref": "pSupportContact"
+                        }
+                    },
+                    {
+                        "Key": "OwnerTeam",
+                        "Value": {
+                            "Ref": "pOwnerTeam"
+                        }
+                    },
+                    {
+                        "Key": "OwnerTeamEmail",
+                        "Value": {
+                            "Ref": "pOwnerTeamEmail"
+                        }
+                    },
+                    {
+                        "Key": "Owner",
+                        "Value": {
+                            "Ref": "pOwner"
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    "Outputs": {
+        "BucketName": {
+            "Value": {
+                "Ref": "S3Bucket"
+            }
+        }
+    }
+}
